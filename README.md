@@ -35,7 +35,7 @@ This project was built from first principles to deeply understand transport prot
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/your-username/live-auction-engine.git](https://github.com/your-username/live-auction-engine.git)
+   git clone https://github.com/Arya125-droid/live-bidding-engine
    cd live-auction-engine
     ```
 
