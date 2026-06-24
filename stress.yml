@@ -1,0 +1,21 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    # Phase 1: The Warm-Up. 50 new users per second for 15 seconds.
+    - duration: 15
+      arrivalRate: 50
+      name: "Warm up phase"
+    
+    # Phase 2: The Spike. 500 new users per second for 30 seconds!
+    - duration: 30
+      arrivalRate: 500
+      name: "Aggressive Bidding Spike"
+
+scenarios:
+  - name: "Place a random bid"
+    flow:
+      - post:
+          url: "/bid"
+          json:
+            # Generates a random bid between 100 and 1,000,000 to keep the cache updating
+            amount: "{{ $randomNumber(100, 1000000) }}"

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Auction Engine</title>
+    <style>
+        body { font-family: -apple-system, system-ui, sans-serif; text-align: center; margin-top: 80px; background-color: #111; color: white;}
+        #price { font-size: 5rem; font-weight: bold; color: #2ecc71; margin: 20px 0; transition: color 0.3s; }
+        .controls { margin-top: 30px; }
+        input { padding: 15px; font-size: 1.2rem; width: 200px; border-radius: 5px; border: none; }
+        button { padding: 15px 30px; font-size: 1.2rem; font-weight: bold; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #c0392b; }
+        #status { color: #7f8c8d; margin-top: 30px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <h1>Rare Tech Artifact Auction</h1>
+    <p>Current Highest Bid:</p>
+    <div id="price">$---</div>
+    
+    <div class="controls">
+        <input type="number" id="bidAmount" placeholder="Enter higher bid...">
+        <button onclick="placeBid()">Place Bid</button>
+    </div>
+    
+    <div id="status">Connecting to engine...</div>
+
+    <script>
+        // Establish the WebSocket Connection
+        // Because we are on localhost:3000 we dynamically grab the host
+        const ws = new WebSocket(`ws://${window.location.host}`);
+        const statusEl = document.getElementById('status');
+        const priceEl = document.getElementById('price');
+
+        // Connection Lifecycle
+        ws.onopen = () => { statusEl.innerText = "Connected to Live Auction"; };
+        ws.onclose = () => { statusEl.innerText = "Disconnected from Engine"; };
+
+        // Listen for Broadcasts from the Server
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'UPDATE_BID') {
+                priceEl.innerText = `$${data.amount}`;
+                
+                // Flash the text white when a new bid comes in, then fade back to green
+                priceEl.style.color = 'white';
+                setTimeout(() => priceEl.style.color = '#2ecc71', 300);
+            }
+        };
+
+        // Send HTTP POST request when user clicks the button
+        async function placeBid() {
+            const amount = document.getElementById('bidAmount').value;
+            if (!amount) return;
+
+            // Standard REST API call
+            const response = await fetch('/bid', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: amount })
+            });
+
+            const result = await response.json();
+            
+            // If the server cache rejected it, alert the user
+            if (!result.success) {
+                alert(result.message);
+            }
+            
+            document.getElementById('bidAmount').value = ''; // clear input
+        }
+    </script>
+</body>
+</html>
