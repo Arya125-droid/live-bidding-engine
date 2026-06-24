@@ -4,6 +4,8 @@ A zero-dependency, ultra-low-latency real-time bidding engine and broadcasting h
 
 Designed to mimic high-frequency trading order book architecture, this system handles concurrent state changes and live market data streaming without relying on heavy web frameworks like Express.js.
 
+---
+
 ## Performance Benchmarks (Stress Testing)
 
 The architecture was aggressively benchmarked using **Artillery.io** to simulate heavy traffic spikes and test the resilience of the custom in-memory caching layer. 
@@ -15,6 +17,8 @@ The architecture was aggressively benchmarked using **Artillery.io** to simulate
 * **Max Latency:** 134ms during absolute peak connection phase.
 * **State Accuracy:** Successfully processed 15,750 transactions, accurately rejecting 15,738 lower bids (`400 Bad Request`) and broadcasting 12 new highest bids (`200 OK`) in real-time.
 
+---
+
 ## System Architecture
 
 This project was built from first principles to deeply understand transport protocols, memory management, and concurrent state management.
@@ -24,6 +28,8 @@ This project was built from first principles to deeply understand transport prot
 3. **In-Memory Algorithmic State:** Implements a volatile RAM-based caching layer for the "Current Highest Bid," ensuring sub-millisecond read/write speeds for validation before propagating state changes.
 4. **Transparent Broadcasting:** The millisecond a state change is validated, the `ws` hub iterates over the active `Set` of connected clients to push the new market price directly to the DOM.
 
+---
+
 ## Tech Stack
 
 * **Backend:** Native Node.js (`http`, `fs`, `path`)
@@ -31,12 +37,14 @@ This project was built from first principles to deeply understand transport prot
 * **Frontend:** Vanilla HTML5, CSS3, JavaScript (Zero-build-step)
 * **Testing:** Artillery.io
 
+---
+
 ## Installation & Usage
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/Arya125-droid/live-bidding-engine
-   cd live-auction-engine
+   cd live-bidding-engine
     ```
 
 2. Install the WebSocket dependency:
@@ -53,7 +61,9 @@ This project was built from first principles to deeply understand transport prot
 
 4. Open multiple browser windows to `http://localhost:3000` to interact with the live synchronized state.
 
-## 📊 Run the Stress Test Yourself
+---
+
+## Run the Stress Test Yourself
 
 To reproduce the benchmark metrics:
 
@@ -62,12 +72,8 @@ To reproduce the benchmark metrics:
     ```bash
     npm install -g artillery
     ```
-
-
 3. Run the included load-testing script:
     ```bash
     artillery run stress.yml
     ```
-
-
 4. Watch the terminal for real-time latency and throughput reporting.
